@@ -1,0 +1,19 @@
+FROM ubuntu:22.04
+
+RUN apt-get update && \
+    apt-get install -y openssh-server openssh-client && \
+    rm -rf /var/lib/apt/lists/*
+
+# Ubuntu is missing this directory, but only on some releases. Consistent is the key.
+RUN mkdir -p /run/sshd
+
+RUN echo 'LogLevel DEBUG3 \n\
+PermitRootLogin yes \n\
+TrustedUserCAKeys /etc/ssh/user_ca.pub \n\
+HostKey /etc/ssh/example.com \n\
+HostCertificate /etc/ssh/example.com-cert.pub \n' > /etc/ssh/sshd_config
+
+COPY ./ssh/user_ca-cert.pub /etc/ssh/user_ca.pub
+COPY ./ssh/host_ca /etc/ssh/example.com
+COPY ./ssh/host_ca-cert.pub /etc/ssh/example.com-cert.pub
+
