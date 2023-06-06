@@ -17,12 +17,11 @@ docker build -t centos7-ssh -f Dockerfile-centos7 .
 # Run Go SSH server in the background
 go run main.go &
 
-# Run the Ubuntu container with OpenSSH 8.9
+# Run the Ubuntu container with OpenSSH 8.9 - no issue here
 docker run -it --rm --network=host -v $(pwd):/app ubuntu2204-ssh ssh -vvv -p2222 -o IdentityFile="/app/ssh/user_ca" -o CertificateFile="/app/ssh/user_ca-cert.pub" root@localhost || true
 
 go run main.go &
 
-# Run the CentOS container with OpenSSH 7.4
+# Run the CentOS container with OpenSSH 7.4 - older client fails
 docker run -it --rm --network=host -v $(pwd):/app centos7-ssh ssh -vvv -p2222 -o IdentityFile="/app/ssh/user_ca" -o CertificateFile="/app/ssh/user_ca-cert.pub" root@localhost || true
-# docker run -d -p 2222:22 --name centos7-ssh centos7-ssh
 
